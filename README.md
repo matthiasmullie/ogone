@@ -23,7 +23,7 @@
 
     // create Ogone-object
     use MatthiasMullie\Ogone;
-    $ogone = new Ogone\Ogone($orderID, $amount, $pspId, $currency, $SHAIn, $SHAOut, $digest);
+    $ogone = new Ogone\Ogone($orderID, $amount, $pspId, $currency, $shaIn, $shaOut, $digest);
 
     // define test or production (for real payments) Ogone environment
     $ogone->setEnvironment($environment);
