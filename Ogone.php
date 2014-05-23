@@ -233,7 +233,7 @@ class Ogone
     public function __construct($orderID, $amount, $pspId, $currency, $SHAIn, $SHAOut, $digest = 'SHA1')
     {
         // set digest
-        $this->setDigest($digest);
+        $this->setEncryptionMethod($digest);
 
         // set SHA-IN & SHA-OUT
         $this->setSHAIn($SHAIn);
@@ -371,11 +371,11 @@ class Ogone
     }
 
     /**
-     * Set the encryption-method to use, possible value are: SHA1, SHA256, SHA512.
+     * Get the encryption method.
      *
      * @return string
      */
-    public function getDigest()
+    public function getEncryptionMethod()
     {
         return $this->SHA;
     }
@@ -514,19 +514,21 @@ class Ogone
     }
 
     /**
-     * Set the encryption-method to use, possible value are: SHA1, SHA256, SHA512.
+     * Set the encryption method to use.
+     * Possible values are: SHA1, SHA256, SHA512.
      *
-     * @param string $digest
+     * @param string $encryptionType
      * @throws \InvalidArgumentException
      */
-    public function setDigest($digest)
+    public function setEncryptionMethod($encryptionType)
     {
-        if (!in_array($digest, $this->allowedSHA)) {
+        $encryptionType = strtoupper(trim($encryptionType));
+        if (!in_array($encryptionType, $this->allowedSHA, true)) {
             throw new \InvalidArgumentException(
-                'Invalid digest.  Allowed values are: '. implode(', ', $this->allowedSHA) .'.'
+                'Invalid encryption type. Allowed values are: '. implode(', ', $this->allowedSHA) .'.'
             );
         }
-        $this->SHA = $digest;
+        $this->SHA = $encryptionType;
     }
 
 }
