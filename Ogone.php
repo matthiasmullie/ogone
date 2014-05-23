@@ -232,9 +232,8 @@ class Ogone
      */
     public function __construct($orderID, $amount, $pspId, $currency, $SHAIn, $SHAOut, $digest = 'SHA1')
     {
-        // check if selected digest is allowed
-        if(in_array($digest, $this->allowedSHA)) $this->SHA = $digest;
-        else $this->SHA = $this->allowedSHA[0];
+        // set digest
+        $this->setEncryptionMethod($digest);
 
         // set SHA-IN & SHA-OUT
         $this->setSHAIn($SHAIn);
@@ -372,6 +371,16 @@ class Ogone
     }
 
     /**
+     * Get the encryption method.
+     *
+     * @return string
+     */
+    public function getEncryptionMethod()
+    {
+        return $this->SHA;
+    }
+
+    /**
      * This method checks the data integrity based on the SHA-string.
      *
      * @return bool returns true on success, false on failure.
@@ -503,4 +512,23 @@ class Ogone
     {
         $this->SHAOut = $SHAOut;
     }
+
+    /**
+     * Set the encryption method to use.
+     * Possible values are: SHA1, SHA256, SHA512.
+     *
+     * @param string $encryptionType
+     * @throws \InvalidArgumentException
+     */
+    public function setEncryptionMethod($encryptionType)
+    {
+        $encryptionType = strtoupper(trim($encryptionType));
+        if (!in_array($encryptionType, $this->allowedSHA, true)) {
+            throw new \InvalidArgumentException(
+                'Invalid encryption type. Allowed values are: '. implode(', ', $this->allowedSHA) .'.'
+            );
+        }
+        $this->SHA = $encryptionType;
+    }
+
 }
