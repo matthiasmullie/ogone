@@ -10,7 +10,7 @@
     // order details
     $orderID = 1;
     $amount = 50;
-    $pspId = 'EUR';
+    $currency = 'EUR';
 
     // your Ogone config setup (see Ogone class phpdoc for more info)
     $pspId = '<your-PSP-id>';
