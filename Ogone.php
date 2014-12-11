@@ -400,7 +400,7 @@ class Ogone
             elseif($this->verification == 'each') $sha = $this->getSHA($this->getRawSHA($this->parametersOut, $this->SHAOutParameters, $this->SHAOut));
 
             // doublecheck SHA digest
-            if($sha == $this->getSHA($this->getRawSHA($this->parametersOut, $this->SHAOutParameters, $this->SHAOut))) $status = 'accept';
+            if($sha === $this->parametersOut['SHASIGN']) $status = 'accept';
             else $status = 'error';
         } else $status = 'error';
 
