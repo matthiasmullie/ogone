@@ -10,11 +10,11 @@ namespace MatthiasMullie\Ogone;
 class Ogone
 {
     /**
-     * Allowed SHA.
+     * Allowed encryption types.
      *
      * @var array
      */
-    private $allowedSHA = array('SHA1', 'SHA256', 'SHA512');
+    private $allowedEncryptionType = array('SHA1', 'SHA256', 'SHA512');
 
     /**
      * Will contain more detailed info regarding the processing of Ogone's feedback.
@@ -112,28 +112,28 @@ class Ogone
      *
      * @var string
      */
-    private $SHAIn = '';
+    private $shaIn = '';
 
     /**
      * SHA-OUT for Ogone.
      *
      * @var string
      */
-    private $SHAOut = '';
+    private $shaOut = '';
 
     /**
-     * SHA digest to use.
+     * Encrytion type to use.
      *
      * @var string
      */
-    private $SHA = '';
+    private $encryptionType = '';
 
     /**
      * List of fields that need to be included in SHA-IN calculation.
      *
      * @var array
      */
-    private $SHAInParameters = array('ACCEPTURL',                       'ADDMATCH',                         'ADDRMATCH',
+    private $shaInParameters = array('ACCEPTURL',                       'ADDMATCH',                         'ADDRMATCH',
                                      'ALIAS',                           'ALIASOPERATION',                   'ALIASUSAGE',
                                      'ALLOWCORRECTION',                 'AMOUNT',                           'AMOUNTHTVA',
                                      'AMOUNTTVA',                       'BACKURL',                          'BGCOLOR',
@@ -197,20 +197,20 @@ class Ogone
      *
      * @var array
      */
-    private $SHAOutParameters = array('AAVADDRESS',                        'AAVCHECK',                            'AAVZIP',
-                                      'ACCEPTANCE',                        'ALIAS',                            'AMOUNT',
-                                      'BRAND',                            'CARDNO',                            'CCCTY',
-                                      'SHA-OUT',                            'CN',                                'COMPLUS',
-                                      'CURRENCY',                            'CVCCHECK',                            'DCC_COMMPERCENTAGE',
-                                      'DCC_CONVAMOUNT',                    'DCC_CONVCCY',                        'DCC_EXCHRATE',
-                                      'DCC_EXCHRATESOURCE',                'DCC_EXCHRATETS',                    'DCC_INDICATOR',
-                                      'DCC_MARGINPERCENTAGE',                'DCC_VALIDHOUS',                    'DIGESTCARDNO',
-                                      'ECI',                                'ED',                                'ENCCARDNO',
-                                      'IP',                                'IPCTY',                            'NBREMAILUSAGE',
-                                      'NBRIPUSAGE',                        'NBRIPUSAGE_ALLTX',                    'NBRUSAGE',
-                                      'NCERROR',                            'ORDERID',                            'PAYID',
-                                      'PM',                                'SCO_CATEGORY',                        'SCORING',
-                                      'STATUS',                            'TRXDATE',                            'VC');
+    private $shaOutParameters = array('AAVADDRESS',                     'AAVCHECK',                         'AAVZIP',
+                                      'ACCEPTANCE',                     'ALIAS',                            'AMOUNT',
+                                      'BRAND',                          'CARDNO',                           'CCCTY',
+                                      'SHA-OUT',                        'CN',                               'COMPLUS',
+                                      'CURRENCY',                       'CVCCHECK',                         'DCC_COMMPERCENTAGE',
+                                      'DCC_CONVAMOUNT',                 'DCC_CONVCCY',                      'DCC_EXCHRATE',
+                                      'DCC_EXCHRATESOURCE',             'DCC_EXCHRATETS',                   'DCC_INDICATOR',
+                                      'DCC_MARGINPERCENTAGE',           'DCC_VALIDHOUS',                    'DIGESTCARDNO',
+                                      'ECI',                            'ED',                               'ENCCARDNO',
+                                      'IP',                             'IPCTY',                            'NBREMAILUSAGE',
+                                      'NBRIPUSAGE',                     'NBRIPUSAGE_ALLTX',                 'NBRUSAGE',
+                                      'NCERROR',                        'ORDERID',                          'PAYID',
+                                      'PM',                             'SCO_CATEGORY',                     'SCORING',
+                                      'STATUS',                         'TRXDATE',                          'VC');
 
     /**
      * SHA verification method.
@@ -224,20 +224,20 @@ class Ogone
      *
      * @param string           $orderID  Your order number (merchant reference). The system checks that a payment has not been requested twice for the same order.
      * @param float            $amount   Amount to be paid.
-     * @param string           $pspId    Your affliation name in our system.
+     * @param string           $pspId    Your affiliation name in Ogone system.
      * @param string           $currency Currency of the order (ISO alpha code).
-     * @param string           $SHAIn    The SHA-In-string.
-     * @param string           $SHAOut   The SHA-Out-string.
+     * @param string           $shaIn    The SHA-In-string.
+     * @param string           $shaOut   The SHA-Out-string.
      * @param string[optional] $digest   The encryption-method to use, possible value are: SHA1, SHA256, SHA512.
      */
-    public function __construct($orderID, $amount, $pspId, $currency, $SHAIn, $SHAOut, $digest = 'SHA1')
+    public function __construct($orderID, $amount, $pspId, $currency, $shaIn, $shaOut, $digest = 'SHA1')
     {
         // set digest
         $this->setEncryptionMethod($digest);
 
         // set SHA-IN & SHA-OUT
-        $this->setSHAIn($SHAIn);
-        $this->setSHAOut($SHAOut);
+        $this->setSHAIn($shaIn);
+        $this->setSHAOut($shaOut);
 
         // add form fields
         $this->setParameter('PSPID', $pspId);
@@ -249,17 +249,15 @@ class Ogone
     /**
      * Get a detail value (or all).
      *
-     * @param string[optional] $key The name of the parameter to grab.
+     * @param  string[optional] $key The name of the parameter to grab.
      * @return mixed
      */
     public function getDetail($key = null)
     {
         // single key requested
         if ($key !== null) {
-            // redefine
             $key = mb_strtoupper((string) $key);
 
-            // return
             return (isset($this->parametersOut[$key])) ? $this->parametersOut[$key] : null;
         }
 
@@ -273,7 +271,7 @@ class Ogone
      */
     public function getEnvironment()
     {
-        return 'https://secure.ogone.com/ncol/'. $this->environment .'/orderstandard_utf8.asp';
+        return 'https://secure.ogone.com/ncol/' . $this->environment . '/orderstandard_utf8.asp';
     }
 
     /**
@@ -283,11 +281,15 @@ class Ogone
      */
     public function getFormParameters()
     {
-        // old sha verification method (only several parameters)
-        if($this->verification == 'main') $sha = $this->getSHA1($this->parametersIn['ORDERID'] . $this->parametersIn['AMOUNT'] . $this->parametersIn['CURRENCY'] . $this->parametersIn['PSPID'] . $this->SHAIn);
-
-        // new sha verification method (all parameters)
-        elseif($this->verification == 'each') $sha = $this->getSHA($this->getRawSHA($this->parametersIn, $this->SHAInParameters, $this->SHAIn));
+        if ($this->verification == 'main') {
+            // old sha verification method (only several parameters)
+            $params = $this->parametersIn['ORDERID'] . $this->parametersIn['AMOUNT'] . $this->parametersIn['CURRENCY'] . $this->parametersIn['PSPID'] . $this->shaIn;
+            $sha = $this->getSHA1($params);
+        } else {
+            // new sha verification method (all parameters)
+            $params = $this->getRawSHA($this->parametersIn, $this->shaInParameters, $this->shaIn);
+            $sha = $this->getSHA($params);
+        }
 
         // add SHA to parameters
         $this->setParameter('SHASign', $sha);
@@ -298,9 +300,9 @@ class Ogone
     /**
      * Get the data to be digested.
      *
-     * @param array  $parameters The parameters.
-     * @param array  $include    Which parameters to include.
-     * @param string $passphrase The passphrase to use.
+     * @param  array  $parameters The parameters.
+     * @param  array  $include    Which parameters to include.
+     * @param  string $passphrase The passphrase to use.
      * @return string
      */
     private function getRawSHA($parameters, $include, $passphrase)
@@ -312,7 +314,11 @@ class Ogone
         $params = array();
 
         // add required params to our digest
-        foreach($parameters as $key => $value) if(in_array($key, $include) && $value != '') $params[$key] = $key .'='. $value;
+        foreach ($parameters as $key => $value) {
+            if (in_array($key, $include) && $value != '') {
+                $params[$key] = $key .'='. $value;
+            }
+        }
 
         // add secret key and return
         return implode($passphrase, $params) . $passphrase;
@@ -321,35 +327,38 @@ class Ogone
     /**
      * Get SHA digest.
      *
-     * @param string $SHA The SHA-string.
+     * @param  string $sha The SHA-string.
      * @return string
      */
-    public function getSHA($SHA)
+    public function getSHA($sha)
     {
-        return call_user_func(array($this, 'get'. ucfirst($this->SHA)), $SHA);
+        return call_user_func(array($this, 'get'. ucfirst($this->encryptionType)), $sha);
     }
 
     /**
      * Generate SHA1 digest.
      *
-     * @param string $SHA The SHA-string.
+     * @param  string $sha The SHA-string.
      * @return string
      */
-    public function getSHA1($SHA)
+    public function getSHA1($sha)
     {
-        return mb_strtoupper(sha1($SHA));
+        return mb_strtoupper(sha1($sha));
     }
 
     /**
      * Generate SHA256 digest.
      *
-     * @param string $SHA The SHA-string.
+     * @param  string    $sha The SHA-string.
      * @return string
+     * @throws Exception
      */
-    public function getSHA256($SHA)
+    public function getSHA256($sha)
     {
         // see if we can generate the SHA
-        if(function_exists('hash')) return mb_strtoupper(hash('sha256', $SHA));
+        if (function_exists('hash')) {
+            return mb_strtoupper(hash('sha256', $sha));
+        }
 
         // could not generator SHA, throw exception
         throw new Exception('SHA-256 could not be created');
@@ -358,13 +367,16 @@ class Ogone
     /**
      * Generate SHA512 digest.
      *
-     * @param string $SHA The SHA-string.
+     * @param  string    $sha The SHA-string.
      * @return string
+     * @throws Exception
      */
-    public function getSHA512($SHA)
+    public function getSHA512($sha)
     {
         // see if we can generate the SHA
-        if(function_exists('hash')) return mb_strtoupper(hash('sha512', $SHA));
+        if (function_exists('hash')) {
+            return mb_strtoupper(hash('sha512', $sha));
+        }
 
         // could not generator SHA, throw exception
         throw new Exception('SHA-512 could not be created');
@@ -377,7 +389,7 @@ class Ogone
      */
     public function getEncryptionMethod()
     {
-        return $this->SHA;
+        return $this->encryptionType;
     }
 
     /**
@@ -388,21 +400,37 @@ class Ogone
     public function isCorrectSHA()
     {
         // retrieve parameters from Ogone
-        if($this->method == 'get') foreach((array) $_GET as $key => $value) $this->parametersOut[mb_strtoupper($key)] = urldecode($value);
-        elseif($this->method == 'post') foreach((array) $_POST as $key => $value) $this->parametersOut[mb_strtoupper($key)] = urldecode($value);
+        if ($this->method == 'get') {
+            foreach ((array) $_GET as $key => $value) {
+                $this->parametersOut[mb_strtoupper($key)] = urldecode($value);
+            }
+        } elseif ($this->method == 'post') {
+            foreach ((array) $_POST as $key => $value) {
+                $this->parametersOut[mb_strtoupper($key)] = urldecode($value);
+            }
+        }
 
         // parameters received?
         if (isset($this->parametersOut['SHASIGN'])) {
-            // old sha verification method (only several parameters)
-            if($this->verification == 'main') $sha = $this->getSHA1($this->parametersIn['ORDERID'] . $this->parametersIn['CURRENCY'] . $this->parametersIn['AMOUNT'] . $this->parametersIn['PM'] . $this->parametersIn['ACCEPTANCE'] . $this->parametersIn['STATUS'] . $this->parametersIn['CARDNO'] . $this->parametersIn['PAYID'] .$this->parametersIn['NCERROR'] .$this->parametersIn['BRAND'] . $this->SHAOut);
-
-            // new sha verification method (all parameters)
-            elseif($this->verification == 'each') $sha = $this->getSHA($this->getRawSHA($this->parametersOut, $this->SHAOutParameters, $this->SHAOut));
+            if ($this->verification == 'main') {
+                // old sha verification method (only several parameters)
+                $params = $this->parametersIn['ORDERID'] . $this->parametersIn['CURRENCY'] . $this->parametersIn['AMOUNT'] . $this->parametersIn['PM'] . $this->parametersIn['ACCEPTANCE'] . $this->parametersIn['STATUS'] . $this->parametersIn['CARDNO'] . $this->parametersIn['PAYID'] .$this->parametersIn['NCERROR'] .$this->parametersIn['BRAND'] . $this->shaOut;
+                $sha = $this->getSHA1($params);
+            } else {
+                // new sha verification method (all parameters)
+                $params = $this->getRawSHA($this->parametersOut, $this->shaOutParameters, $this->shaOut);
+                $sha = $this->getSHA($params);
+            }
 
             // doublecheck SHA digest
-            if($sha === $this->parametersOut['SHASIGN']) $status = 'accept';
-            else $status = 'error';
-        } else $status = 'error';
+            if ($sha === $this->parametersOut['SHASIGN']) {
+                $status = 'accept';
+            } else {
+                $status = 'error';
+            }
+        } else {
+            $status = 'error';
+        }
 
         // save
         $this->detailed['sha'] = $status;
@@ -414,7 +442,8 @@ class Ogone
     /**
      * Set the environment.
      *
-     * @param string[optional] $environment The environment to operate in, possible values are: prod, test.
+     * @param  string[optional] $environment The environment to operate in, possible values are: prod, test.
+     * @throws Exception
      */
     public function setEnvironment($environment = 'prod')
     {
@@ -422,7 +451,9 @@ class Ogone
         $possibleValues = array('prod', 'test');
 
         // validate
-        if(!in_array($environment, $possibleValues)) throw new Exception('Invalid environment. Allowed environments are: '. implode(', ', $possibleValues) .'.');
+        if (!in_array($environment, $possibleValues)) {
+            throw new Exception('Invalid environment. Allowed environments are: '. implode(', ', $possibleValues) .'.');
+        }
 
         // set
         $this->environment = (string) $environment;
@@ -431,7 +462,8 @@ class Ogone
     /**
      * Set the request method.
      *
-     * @param string[optional] $method The method used to submit data back to us, possible values are: get, post.
+     * @param  string[optional] $method The method used to submit data back to us, possible values are: get, post.
+     * @throws Exception
      */
     public function setMethod($method = 'get')
     {
@@ -439,7 +471,9 @@ class Ogone
         $possibleValues = array('get', 'post');
 
         // validate
-        if(!in_array($method, $possibleValues)) throw new Exception('Invalid request method. Allowed methods are: '. implode(', ', $possibleValues) .'.');
+        if (!in_array($method, $possibleValues)) {
+            throw new Exception('Invalid request method. Allowed methods are: '. implode(', ', $possibleValues) .'.');
+        }
 
         // set
         $this->method = (string) $method;
@@ -448,7 +482,8 @@ class Ogone
     /**
      * Set the SHA verification method.
      *
-     * @param string[optional] $verification The method to use for the sha-verification string, possible values are: main, each.
+     * @param  string[optional] $verification The method to use for the sha-verification string, possible values are: main, each.
+     * @throws Exception
      */
     public function setVerification($verification = 'each')
     {
@@ -456,7 +491,9 @@ class Ogone
         $possibleValues = array('main', 'each');
 
         // validate
-        if(!in_array($verification, $possibleValues)) throw new Exception('Invalid verification method. Allowed methods are: '. implode(', ', $possibleValues) .'.');
+        if (!in_array($verification, $possibleValues)) {
+            throw new Exception('Invalid verification method. Allowed methods are: '. implode(', ', $possibleValues) .'.');
+        }
 
         // set
         $this->verification = (string) $verification;
@@ -465,8 +502,9 @@ class Ogone
     /**
      * Set a parameter.
      *
-     * @param string $key   The name of the parameter.
-     * @param string $value The value.
+     * @param  string    $key   The name of the parameter.
+     * @param  string    $value The value.
+     * @throws Exception
      */
     public function setParameter($key, $value)
     {
@@ -475,7 +513,9 @@ class Ogone
         $value = (string) $value;
 
         // validate maximum length
-        if(isset($this->parametersMaximumLength[$key]) && mb_strlen($value) > $this->parametersMaximumLength[$key]) throw new Exception('Value for '. $key .' too long. Maximum-length is: '. $this->parametersMaximumLength[$key]);
+        if (isset($this->parametersMaximumLength[$key]) && mb_strlen($value) > $this->parametersMaximumLength[$key]) {
+            throw new Exception('Value for '. $key .' too long. Maximum-length is: '. $this->parametersMaximumLength[$key]);
+        }
 
         // set parameters
         $this->parametersIn[$key] = $value;
@@ -496,39 +536,40 @@ class Ogone
     /**
      * Set SHA-IN.
      *
-     * @param string $SHAIn The SHA-in-string.
+     * @param string $shaIn The SHA-in-string.
      */
-    public function setSHAIn($SHAIn)
+    public function setSHAIn($shaIn)
     {
-        $this->SHAIn = $SHAIn;
+        $this->shaIn = $shaIn;
     }
 
     /**
      * Set SHA-OUT.
      *
-     * @param string $SHAOut The SHA-out-string.
+     * @param string $shaOut The SHA-out-string.
      */
-    public function setSHAOut($SHAOut)
+    public function setSHAOut($shaOut)
     {
-        $this->SHAOut = $SHAOut;
+        $this->shaOut = $shaOut;
     }
 
     /**
      * Set the encryption method to use.
      * Possible values are: SHA1, SHA256, SHA512.
      *
-     * @param string $encryptionType
+     * @param  string                    $encryptionType
      * @throws \InvalidArgumentException
      */
     public function setEncryptionMethod($encryptionType)
     {
         $encryptionType = strtoupper(trim($encryptionType));
-        if (!in_array($encryptionType, $this->allowedSHA, true)) {
+
+        if (!in_array($encryptionType, $this->allowedEncryptionType, true)) {
             throw new \InvalidArgumentException(
-                'Invalid encryption type. Allowed values are: '. implode(', ', $this->allowedSHA) .'.'
+                'Invalid encryption type. Allowed values are: '. implode(', ', $this->allowedEncryptionType) .'.'
             );
         }
-        $this->SHA = $encryptionType;
-    }
 
+        $this->encryptionType = $encryptionType;
+    }
 }
