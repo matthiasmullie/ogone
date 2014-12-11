@@ -14,42 +14,42 @@ class Ogone
      *
      * @var array
      */
-    private $allowedEncryptionType = array('SHA1', 'SHA256', 'SHA512');
+    protected $allowedEncryptionType = array('SHA1', 'SHA256', 'SHA512');
 
     /**
      * Will contain more detailed info regarding the processing of Ogone's feedback.
      *
      * @param array
      */
-    private $detailed = array();
+    protected $detailed = array();
 
     /**
      * The environment.
      *
      * @var string
      */
-    private $environment = 'prod';
+    protected $environment = 'prod';
 
     /**
      * Request method.
      *
      * @var string
      */
-    private $method = 'get';
+    protected $method = 'get';
 
     /**
      * Parameters that will be sent to Ogone.
      *
      * @var array
      */
-    private $parametersIn = array();
+    protected $parametersIn = array();
 
     /**
      * The maximum length for a variable.
      *
      * @var array
      */
-    private $parametersMaximumLength = array('AAVCHECK' => 2,
+    protected $parametersMaximumLength = array('AAVCHECK' => 2,
                                              'ACCEPTANCE' => 15,
                                              'ACCEPTURL' => 200,
                                              'ALIAS' => 50,
@@ -105,35 +105,35 @@ class Ogone
      *
      * @var array
      */
-    private $parametersOut = array();
+    protected $parametersOut = array();
 
     /**
      * SHA-IN for Ogone.
      *
      * @var string
      */
-    private $shaIn = '';
+    protected $shaIn = '';
 
     /**
      * SHA-OUT for Ogone.
      *
      * @var string
      */
-    private $shaOut = '';
+    protected $shaOut = '';
 
     /**
      * Encrytion type to use.
      *
      * @var string
      */
-    private $encryptionType = '';
+    protected $encryptionType = '';
 
     /**
      * List of fields that need to be included in SHA-IN calculation.
      *
      * @var array
      */
-    private $shaInParameters = array('ACCEPTURL',                       'ADDMATCH',                         'ADDRMATCH',
+    protected $shaInParameters = array('ACCEPTURL',                       'ADDMATCH',                         'ADDRMATCH',
                                      'ALIAS',                           'ALIASOPERATION',                   'ALIASUSAGE',
                                      'ALLOWCORRECTION',                 'AMOUNT',                           'AMOUNTHTVA',
                                      'AMOUNTTVA',                       'BACKURL',                          'BGCOLOR',
@@ -197,7 +197,7 @@ class Ogone
      *
      * @var array
      */
-    private $shaOutParameters = array('AAVADDRESS',                     'AAVCHECK',                         'AAVZIP',
+    protected $shaOutParameters = array('AAVADDRESS',                     'AAVCHECK',                         'AAVZIP',
                                       'ACCEPTANCE',                     'ALIAS',                            'AMOUNT',
                                       'BRAND',                          'CARDNO',                           'CCCTY',
                                       'SHA-OUT',                        'CN',                               'COMPLUS',
@@ -217,7 +217,7 @@ class Ogone
      *
      * @var string
      */
-    private $verification = 'each';
+    protected $verification = 'each';
 
     /**
      * Construct Ogone class.
@@ -305,7 +305,7 @@ class Ogone
      * @param  string $passphrase The passphrase to use.
      * @return string
      */
-    private function getRawSHA($parameters, $include, $passphrase)
+    protected function getRawSHA($parameters, $include, $passphrase)
     {
         // alphabetically, based on keys
         ksort($parameters);
