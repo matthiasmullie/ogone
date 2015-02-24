@@ -2,6 +2,7 @@
     "name": "matthiasmullie/ogone",
     "type": "library",
     "description": "Wrapper class to make Ogone implementations a lot easier",
+    "keywords": ["ogone", "payment"],
     "homepage": "https://github.com/matthiasmullie/ogone",
     "license": "MIT",
     "authors": [
