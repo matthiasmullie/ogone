@@ -1,24 +1,24 @@
 {
-	"name": "matthiasmullie/ogone",
-	"type": "library",
-	"description": "Wrapper class to make Ogone implementations a lot easier",
-	"homepage": "https://github.com/matthiasmullie/ogone",
-	"license": "MIT",
-	"authors": [
-		{
-			"name": "Matthias Mullie",
-			"email": "ogone@mullie.eu",
-			"role": "Developer"
-		}
-	],
-	"require": {
-		"php": ">=5.3.0",
-		"ext-mbstring": "*"
-	},
-	"suggest": {
-		"ext-hash": "*"
-	},
-	"autoload": {
-		"classmap": [""]
-	}
+    "name": "matthiasmullie/ogone",
+    "type": "library",
+    "description": "Wrapper class to make Ogone implementations a lot easier",
+    "homepage": "https://github.com/matthiasmullie/ogone",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Matthias Mullie",
+            "email": "ogone@mullie.eu",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0",
+        "ext-mbstring": "*"
+    },
+    "suggest": {
+        "ext-hash": "*"
+    },
+    "autoload": {
+        "classmap": [""]
+    }
 }
